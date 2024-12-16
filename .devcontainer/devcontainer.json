@@ -1,0 +1,46 @@
+{
+    "name": "Qt6 gRPC Development Container",
+    "privileged": true,
+    "remoteUser": "user",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            "USERNAME": "user"
+        }
+    },
+    "workspaceFolder": "/home/ws",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/ws,type=bind",
+    "customizations": {
+        "vscode": {
+            "extensions":[
+                "ms-vscode.cpptools-extension-pack",
+                "eamodio.gitlens",
+                "theqtcompany.qt",
+                "twxs.cmake"
+
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "bash"
+                    }
+                }
+            }
+
+        }
+    },
+    "containerEnv": {
+        "DISPLAY": "${localEnv:DISPLAY}"
+    },
+    "runArgs": [
+        "--net=host",
+        "--pid=host",
+        "--ipc=host",
+        "--device=/dev/dri"
+    ],
+    "mounts": [
+       "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+       "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
+    ]
+}

@@ -1,0 +1,31 @@
+name: build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  appimage:
+    runs-on: ubuntu-latest
+
+    steps:    
+      - uses: actions/checkout@v4
+
+      - name: setup
+        run: chmod a+rw .
+              
+      - name: build
+        run: |
+          docker run --rm --privileged -v "$PWD":/target stepanove/qt_ci:6.8.0 \
+          bash -c "\
+             : 'remove SQL plugin that brakes deployment' \
+          && find /opt/ -name libqsqlmimer.so |xargs sudo rm \
+          && git config --global --add safe.directory /target \
+          && sudo apt update && sudo apt install -y protobuf-compiler protobuf-compiler-grpc libgrpc++-dev \
+          && cd /target && ./makeappimages.sh \
+          && mkdir artifacts \
+          && cp build/*.AppImage ./artifacts"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: appimages
+          path: artifacts
